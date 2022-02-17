@@ -1,0 +1,10 @@
+pandas3d package
+================
+
+Module contents
+---------------
+
+.. automodule:: pandas3d
+   :members:
+   :undoc-members:
+   :show-inheritance:

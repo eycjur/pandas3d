@@ -1,0 +1,7 @@
+pandas3d
+========
+
+.. toctree::
+   :maxdepth: 4
+
+   pandas3d
