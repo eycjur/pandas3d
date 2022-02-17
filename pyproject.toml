@@ -1,0 +1,53 @@
+[tool.poetry]
+name = "pandas3d"
+version = "0.1.0"
+description = ""
+authors = ["eycjur"]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+numpy = "^1.22.2"
+mypy = "^0.931"
+flake8 = "^4.0.1"
+black = "^22.1.0"
+isort = "^5.10.1"
+notebook = "^6.4.8"
+jupyterlab = "^3.2.9"
+jupytext = "^1.13.7"
+scipy = "^1.8.0"
+seaborn = "^0.11.2"
+line-profiler = "^3.4.0"
+lxml = "^4.7.1"
+pytest = "^7.0.1"
+Sphinx = "^4.4.0"
+click = "^8.0.3"
+typer = "^0.4.0"
+sphinx-click = "^3.1.0"
+myst-parser = "^0.17.0"
+sphinx-rtd-theme = "^1.0.0"
+japanize-matplotlib = "^1.1.3"
+pyyml = "^0.0.2"
+types-PyYAML = "^6.0.4"
+tqdm = "^4.62.3"
+
+[tool.poetry.extras]
+extra = []
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.jupytext]
+formats = "notebook//ipynb,notebook//py:percent"
+
+[tool.black]
+exclude = '''
+/(
+      \..*_cache
+    | \.venv
+    | __pycache__
+    | docs
+    | notebook
+    | old
+)/
+'''
