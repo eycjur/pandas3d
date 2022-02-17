@@ -598,7 +598,6 @@ class Iloc:
         Args:
             key (Union[int, list, tuple, slice]): インデクシングするkey
         """
-        # TODO: 次元が減る場合の処理
         if self.__gf.values is None:
             raise ValueError("データがありません")
 
