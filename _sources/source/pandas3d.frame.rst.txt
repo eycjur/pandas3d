@@ -1,0 +1,21 @@
+pandas3d.frame package
+======================
+
+Submodules
+----------
+
+pandas3d.frame.frame module
+---------------------------
+
+.. automodule:: pandas3d.frame.frame
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pandas3d.frame
+   :members:
+   :undoc-members:
+   :show-inheritance:

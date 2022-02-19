@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pandas3d.frame.frame &mdash; pandas3d  ドキュメント</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="検索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> pandas3d
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/modules.html">pandas3d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme_link.html">[readme]pandas3d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todolist.html">Todo lists</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pandas3d</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">モジュールコード</a> &raquo;</li>
+      <li>pandas3d.frame.frame</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>pandas3d.frame.frame のソースコード</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;pandasのDataFrameを画像データ用に拡張したもの&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">overload</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">tqdm</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+
+<div class="viewcode-block" id="check_nan"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.check_nan">[ドキュメント]</a><span class="k">def</span> <span class="nf">check_nan</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;valuesがnanの場合に例外を投げるデコレーター用の関数</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func (Callable): 実行する関数</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Callable: 実行する関数</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: nanが含まれている場合</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="n">gf</span><span class="p">:</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">gf</span><span class="o">.</span><span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;self.__values is None&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">gf</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_wrapper</span></div>
+
+
+<div class="viewcode-block" id="GridFrame"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame">[ドキュメント]</a><span class="k">class</span> <span class="nc">GridFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;pandasのGridFrameに相当</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (np.ndarray): データ</span>
+<span class="sd">        columns (List): カラム名</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; type(gf)</span>
+<span class="sd">            &lt;class &#39;frame.GridFrame&#39;&gt;</span>
+
+<span class="sd">            &gt;&gt;&gt; GridFrame(np.array([1, 2, 3]))</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">            AssertionError: (3,)!=0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;データのサイズとカラム数が不整合です&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__values</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">columns</span>  <span class="c1"># type: ignore</span>
+            <span class="k">return</span>
+
+        <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">は2or3である必要があります&quot;</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># strであればリストに変換</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">columns</span><span class="p">]</span>
+
+        <span class="c1"># カラム数が一致しているか</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># カラム名が重複していないかチェック</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="s2">&quot;カラム名はユニークである必要があります&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span> <span class="o">=</span> <span class="n">columns</span>  <span class="c1"># type: ignore</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@check_nan</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;インデクシングの処理</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            index (str): インデックス</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: インデックスに対応する配列部を返す</span>
+
+<span class="sd">        Hint:</span>
+<span class="sd">            str: gf[&quot;カラム&quot;]</span>
+<span class="sd">            int: gf[1]</span>
+<span class="sd">            slice: gf[1:2]</span>
+<span class="sd">            list[Union[str, int]]: gf[[&quot;カラム&quot;, 1]]</span>
+<span class="sd">            tuple[Union[str, int, slice, list[Union[str, int]]]]: gf[2, 2:3, [1, 2]]</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; type(gf[&quot;a&quot;])</span>
+<span class="sd">            &lt;class &#39;numpy.ndarray&#39;&gt;</span>
+<span class="sd">            &gt;&gt;&gt; type(gf[[&quot;a&quot;]])</span>
+<span class="sd">            &lt;class &#39;frame.GridFrame&#39;&gt;</span>
+<span class="sd">            &gt;&gt;&gt; gf[&quot;a&quot;]</span>
+<span class="sd">            array([[ 0.,  2.,  4.,  6.],</span>
+<span class="sd">                   [ 8., 10., 12., 14.],</span>
+<span class="sd">                   [16., 18., 20., 22.]], dtype=float32)</span>
+<span class="sd">            &gt;&gt;&gt; gf[[&quot;a&quot;, &quot;b&quot;]].shape == array.shape</span>
+<span class="sd">            True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">index</span><span class="p">)]</span>  <span class="c1"># type: ignore</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> is not in columns&quot;</span><span class="p">)</span>
+
+        <span class="c1"># [&quot;x&quot;, &quot;y&quot;]の場合は該当する配列を返す</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]):</span>
+                <span class="n">index_int</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">index_int</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">index</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;type unexpected</span><span class="si">{</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="nb">slice</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ilocを利用してください&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span>  <span class="c1"># type: ignore</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;type unexpected</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;値を代入した場合はカラム名を追加する</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (Union[List[str], str]): カラム名</span>
+<span class="sd">            value (Union[float, np.ndarray]): 値</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf[&quot;c&quot;] = np.arange(12).reshape(3, 4)</span>
+<span class="sd">            &gt;&gt;&gt; gf.columns</span>
+<span class="sd">            [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; gf.shape</span>
+<span class="sd">            (3, 4, 3)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 返り値ではなく内部の値を変更するようにする</span>
+        <span class="c1"># initとは別にバリデーションを行うのはよくないので、仮でappendしてそれに内部を書き換える</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;value is not np.ndarray&quot;</span><span class="p">)</span>
+            <span class="n">gf_</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;__setitem__: 値を上書きします&quot;</span><span class="p">)</span>
+            <span class="n">gf_</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span>
+            <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">str</span>
+            <span class="ow">and</span> <span class="nb">any</span><span class="p">([</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">])</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;既存のキーが含まれています&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+            <span class="n">gf_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GridFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">key</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span> <span class="o">=</span> <span class="n">gf_</span><span class="o">.</span><span class="n">__columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span> <span class="o">=</span> <span class="n">gf_</span><span class="o">.</span><span class="n">__values</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;for文でのイテレータ</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Iterator[tuple[str, np.ndarray]]: カラム名と値のタプル</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; for c, v in gf:</span>
+<span class="sd">            ...     print(c)</span>
+<span class="sd">            ...     print(v)</span>
+<span class="sd">            a</span>
+<span class="sd">            [[ 0.  2.  4.  6.]</span>
+<span class="sd">             [ 8. 10. 12. 14.]</span>
+<span class="sd">             [16. 18. 20. 22.]]</span>
+<span class="sd">            b</span>
+<span class="sd">            [[ 1.  3.  5.  7.]</span>
+<span class="sd">             [ 9. 11. 13. 15.]</span>
+<span class="sd">             [17. 19. 21. 23.]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;in演算子でのチェック</span>
+
+<span class="sd">        - カラム名がcolumnsに含まれているかを返す</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): カラム名</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: カラム名が存在するか</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; &quot;a&quot; in gf</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; &quot;c&quot; in gf</span>
+<span class="sd">            False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;==演算子でのチェック</span>
+
+<span class="sd">        - columns, valuesが同じかを返す</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (GridFrame): 比較対象</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: columns, valuesが同じか</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf == gf</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; gf == GridFrame(array + 1, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            False</span>
+<span class="sd">            &gt;&gt;&gt; gf == GridFrame(array, [&quot;a&quot;, &quot;c&quot;])</span>
+<span class="sd">            False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">GridFrame</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="nd">@check_nan</span>
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;既定以外の属性アクセス</span>
+
+<span class="sd">        - np.ndarrayのメソッドを利用する</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): 属性名</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Any: 属性の値</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">はGridFrameに存在しないので、__valuesにアクセスします&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">はGridFrameに存在しません&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">iloc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Iloc&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;インデクシング</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            GridFrame: インデクシングされたGridFrame</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; type(gf.iloc[0, 0, 0:1])</span>
+<span class="sd">            &lt;class &#39;frame.GridFrame&#39;&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Iloc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;文字列表現</span>
+
+<span class="sd">        - print()での表示に利用される</span>
+<span class="sd">        - カラムごとにカラム名と値を改行区切りで表示する</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: 文字列表現</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">str_</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">)]</span>
+        <span class="p">)</span>
+        <span class="n">str_</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">shape</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, dtype(&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+        <span class="k">return</span> <span class="n">str_</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gf</span><span class="p">:</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;足し算</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gf (GridFrame): 足すGridFrame</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            GridFrame: 足し算したGridFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gf</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;pandasのvaluesに相当</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: 配列部を返す</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; (gf.values == array).all()</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; type(gf.values)</span>
+<span class="sd">            &lt;class &#39;numpy.ndarray&#39;&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span>  <span class="c1"># type: ignore</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;カラム名を返す</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List(str): カラム名</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf.columns</span>
+<span class="sd">            [&#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; type(gf.columns)</span>
+<span class="sd">            &lt;class &#39;list&#39;&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span>
+
+    <span class="nd">@property</span>  <span class="c1"># type: ignore</span>
+    <span class="nd">@check_nan</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;shapeを返す</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[int, ...]: shape</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf.shape</span>
+<span class="sd">            (3, 4, 2)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># type: ignore</span>
+
+<div class="viewcode-block" id="GridFrame.append"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame.append">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gf</span><span class="p">:</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;追加する</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gf (GridFrame): 追加するGridFrame</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            GridFrame: 追加したGridFrame</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf2 = GridFrame(array, [&quot;c&quot;, &quot;d&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf_append = gf.append(gf2)</span>
+<span class="sd">            &gt;&gt;&gt; gf_append.columns</span>
+<span class="sd">            [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; gf_append.shape</span>
+<span class="sd">            (3, 4, 4)</span>
+
+<span class="sd">            &gt;&gt;&gt; gf_append_empty = GridFrame().append(gf)</span>
+<span class="sd">            &gt;&gt;&gt; gf_append_empty.columns</span>
+<span class="sd">            [&#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; gf_append_empty.shape</span>
+<span class="sd">            (3, 4, 2)</span>
+
+<span class="sd">            &gt;&gt;&gt; gf.append(gf)</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">            AssertionError: キーが重複しています</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">gf</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">gf</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;サイズが違います</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">gf</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">col_append</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span> <span class="o">+</span> <span class="n">gf</span><span class="o">.</span><span class="n">__columns</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_append</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">col_append</span><span class="p">)),</span> <span class="s2">&quot;キーが重複しています&quot;</span>
+
+        <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">,</span> <span class="n">gf</span><span class="o">.</span><span class="n">__values</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">col_append</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="GridFrame.copy"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame.copy">[ドキュメント]</a>    <span class="nd">@check_nan</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;コピーする</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            GridFrame: コピーしたGridFrame</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf_copy = gf.copy()</span>
+<span class="sd">            &gt;&gt;&gt; gf_copy is gf</span>
+<span class="sd">            False</span>
+<span class="sd">            &gt;&gt;&gt; gf_copy == gf</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; gf_copy.values is gf.values</span>
+<span class="sd">            False</span>
+<span class="sd">            &gt;&gt;&gt; (gf_copy.values == gf.values).all()</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; gf_copy.columns is gf.columns</span>
+<span class="sd">            False</span>
+<span class="sd">            &gt;&gt;&gt; gf_copy.columns == gf.columns</span>
+<span class="sd">            True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="GridFrame.add_prefix"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame.add_prefix">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">add_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;カラムにprefixを追加する</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prefix (str): 追加するprefix</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            GridFrame: 追加したGridFrame</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf_add_prefix = gf.add_prefix(&quot;test_&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; gf_add_prefix.columns</span>
+<span class="sd">            [&#39;test_a&#39;, &#39;test_b&#39;]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">]</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="GridFrame.extract_columns_startswith"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame.extract_columns_startswith">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">extract_columns_startswith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;txtで始まるカラムを抽出する</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            txt (str): 抽出する文字列</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            GridFrame: 抽出したGridFrame</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a_test&quot;, &quot;b_test&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf_extract = gf.extract_columns_startswith(&quot;a&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; gf_extract.columns</span>
+<span class="sd">            [&#39;a_test&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; gf_extract.shape</span>
+<span class="sd">            (3, 4, 1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">txt</span><span class="p">)]]</span></div>
+
+<div class="viewcode-block" id="GridFrame.extract_columns_endswith"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame.extract_columns_endswith">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">extract_columns_endswith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;txtで終わるカラムを抽出する</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            txt (str): 抽出する文字列</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            GridFrame: 抽出したGridFrame</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;test_a&quot;, &quot;test_b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf_extract = gf.extract_columns_endswith(&quot;a&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; gf_extract.columns</span>
+<span class="sd">            [&#39;test_a&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; gf_extract.shape</span>
+<span class="sd">            (3, 4, 1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">txt</span><span class="p">)]]</span></div>
+
+<div class="viewcode-block" id="GridFrame.to_pandas"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame.to_pandas">[ドキュメント]</a>    <span class="nd">@check_nan</span>
+    <span class="k">def</span> <span class="nf">to_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;pandasのDataFrameに変換する</span>
+
+<span class="sd">        - gf:shape(a, b, c) -&gt; pd.shape(a * b, c)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: pandasのDataFrame</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; df = gf.to_pandas()</span>
+<span class="sd">            &gt;&gt;&gt; type(df)</span>
+<span class="sd">            &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="sd">            &gt;&gt;&gt; df.shape</span>
+<span class="sd">            (12, 2)</span>
+<span class="sd">            &gt;&gt;&gt; list(df.columns)</span>
+<span class="sd">            [&#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>  <span class="c1"># type: ignore</span>
+            <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="GridFrame.check_isfinite"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame.check_isfinite">[ドキュメント]</a>    <span class="nd">@check_nan</span>
+    <span class="k">def</span> <span class="nf">check_isfinite</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;nan, inf, -infが含まれている場合に例外を投げる</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; GridFrame(np.array([[np.inf]]), [&quot;a&quot;]).check_isfinite()</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">            ValueError: nanやinfが含まれています1,0,0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;nanやinfが含まれています</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isposinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">,&quot;</span>  <span class="c1"># type: ignore</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isneginf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">,&quot;</span>  <span class="c1"># type: ignore</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># type: ignore</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="GridFrame.draw_distribution"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame.draw_distribution">[ドキュメント]</a>    <span class="nd">@check_nan</span>
+    <span class="k">def</span> <span class="nf">draw_distribution</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">is_axis</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;png&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;分布を画像として保存する</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            save_dir (Path): 描画した画像を保存するディレクトリ</span>
+<span class="sd">            is_axis (bool): 分布を描画するかどうか</span>
+<span class="sd">            extension (str): 拡張子</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">save_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;分布描画の進行状況&quot;</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">cs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_axis</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cs</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+                <span class="n">save_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span>
+                <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span>
+                <span class="n">pad_inches</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="Iloc"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.Iloc">[ドキュメント]</a><span class="k">class</span> <span class="nc">Iloc</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;インデクシングを行うクラス</span>
+
+<span class="sd">    - gf.ilocで呼ばれる</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gf (GridFrame): GridFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gf</span><span class="p">:</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__gf</span> <span class="o">=</span> <span class="n">gf</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">slice</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">GridFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;インデクシングを行う</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (Union[int, list, tuple, slice]): インデクシングするkey</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__gf</span><span class="o">.</span><span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;データがありません&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__gf</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">),</span>
+                    <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__gf</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__gf</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__gf</span><span class="o">.</span><span class="n">columns</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">slice</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;インデックスに値を設定する</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (Union[int, list, tuple, slice]): インデクシングするkey</span>
+<span class="sd">            value (np.ndarray): 設定する値</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__gf</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="zeros"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.zeros">[ドキュメント]</a><span class="k">def</span> <span class="nf">zeros</span><span class="p">(</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GridFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;0を入れるGridFrameを作成する</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        shape (tuple[int, ...]): shape</span>
+<span class="sd">        columns (Optional[Union[List, str]]): カラム名</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        GridFrame: 0を入れたGridFrame</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; gf = zeros((3, 4, 2), [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">        &gt;&gt;&gt; gf.values.sum()</span>
+<span class="sd">        0.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)</span>  <span class="c1"># tupleにする</span>
+    <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span> <span class="n">columns</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="empty"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.empty">[ドキュメント]</a><span class="k">def</span> <span class="nf">empty</span><span class="p">(</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GridFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;空のGridFrameを作成する</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        shape (tuple[int, ...]): shape</span>
+<span class="sd">        columns (Optional[Union[List, str]]): カラム名</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        GridFrame: 空のGridFrame</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; gf = empty((3, 4))</span>
+<span class="sd">        &gt;&gt;&gt; gf.columns</span>
+<span class="sd">        []</span>
+<span class="sd">        &gt;&gt;&gt; gf.shape</span>
+<span class="sd">        (3, 4, 0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)</span>
+    <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span> <span class="n">columns</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="from_pandas"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.from_pandas">[ドキュメント]</a><span class="k">def</span> <span class="nf">from_pandas</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">GridFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;pandasのDataFrameからGridFrameを作成する</span>
+
+<span class="sd">    - カラムはそのまま</span>
+<span class="sd">    - shape=(a, b)のとき(a * b, c) -&gt; (a , b, c)に変換する</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pd.DataFrame): pandasのDataFrame</span>
+<span class="sd">        shape (tuple[int, int]): shape</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        GridFrame: GridFrame</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; df = pd.DataFrame(np.arange(24).reshape(12, 2), columns=[&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">        &gt;&gt;&gt; gf = from_pandas(df, shape=(3, 4))</span>
+<span class="sd">        &gt;&gt;&gt; gf.shape</span>
+<span class="sd">        (3, 4, 2)</span>
+<span class="sd">        &gt;&gt;&gt; gf.columns</span>
+<span class="sd">        [&#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;shapeが不適切です</span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]),</span> <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, eycjur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

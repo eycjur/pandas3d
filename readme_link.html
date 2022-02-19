@@ -20,7 +20,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="検索" href="search.html" />
     <link rel="next" title="Todo lists" href="todolist.html" />
-    <link rel="prev" title="pandas3d package" href="source/pandas3d.html" /> 
+    <link rel="prev" title="pandas3d.frame package" href="source/pandas3d.frame.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -91,7 +91,7 @@ poetry add git+https://github.com/eycjur/pandas3d.git#main
 <h2>use<a class="headerlink" href="#use" title="このヘッドラインへのパーマリンク"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas3d</span> <span class="k">as</span> <span class="nn">pd3</span>
-<span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="n">gf</span> <span class="o">=</span> <span class="n">pd3</span><span class="o">.</span><span class="n">GridFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">array</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">])</span>
 <span class="n">gf</span>
 <span class="c1"># a</span>
@@ -102,8 +102,6 @@ poetry add git+https://github.com/eycjur/pandas3d.git#main
 <span class="c1">#  [ 7.  9. 11.]]</span>
 <span class="c1"># shape(2, 3, 2), dtype(&#39;float32&#39;)</span>
 
-<span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="n">gf</span> <span class="o">=</span> <span class="n">pd3</span><span class="o">.</span><span class="n">GridFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">array</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">])</span>
 <span class="n">gf</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gf</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">gf</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span>
 <span class="n">gf</span>
 <span class="c1"># a</span>
@@ -125,7 +123,7 @@ poetry add git+https://github.com/eycjur/pandas3d.git#main
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="source/pandas3d.html" class="btn btn-neutral float-left" title="pandas3d package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="source/pandas3d.frame.html" class="btn btn-neutral float-left" title="pandas3d.frame package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="todolist.html" class="btn btn-neutral float-right" title="Todo lists" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

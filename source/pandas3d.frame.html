@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pandas3d.frame package &mdash; pandas3d  ドキュメント</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="[readme]pandas3d" href="../readme_link.html" />
+    <link rel="prev" title="pandas3d package" href="pandas3d.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pandas3d
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">pandas3d</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pandas3d.html">pandas3d package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="pandas3d.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">pandas3d.frame package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pandas3d.html#module-pandas3d">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../readme_link.html">[readme]pandas3d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todolist.html">Todo lists</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pandas3d</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">pandas3d</a> &raquo;</li>
+          <li><a href="pandas3d.html">pandas3d package</a> &raquo;</li>
+      <li>pandas3d.frame package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/source/pandas3d.frame.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pandas3d-frame-package">
+<h1>pandas3d.frame package<a class="headerlink" href="#pandas3d-frame-package" title="このヘッドラインへのパーマリンク"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="このヘッドラインへのパーマリンク"></a></h2>
+</section>
+<section id="module-pandas3d.frame.frame">
+<span id="pandas3d-frame-frame-module"></span><h2>pandas3d.frame.frame module<a class="headerlink" href="#module-pandas3d.frame.frame" title="このヘッドラインへのパーマリンク"></a></h2>
+<p>pandasのDataFrameを画像データ用に拡張したもの</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pandas3d.frame.frame.</span></span><span class="sig-name descname"><span class="pre">GridFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#GridFrame"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.GridFrame" title="この定義へのパーマリンク"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>pandasのGridFrameに相当</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) -- データ</p></li>
+<li><p><strong>columns</strong> (<em>List</em>) -- カラム名</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.add_prefix">
+<span class="sig-name descname"><span class="pre">add_prefix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><span class="pre">pandas3d.frame.frame.GridFrame</span></a></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#GridFrame.add_prefix"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.add_prefix" title="この定義へのパーマリンク"></a></dt>
+<dd><p>カラムにprefixを追加する</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ</dt>
+<dd class="field-odd"><p><strong>prefix</strong> (<em>str</em>) -- 追加するprefix</p>
+</dd>
+<dt class="field-even">戻り値</dt>
+<dd class="field-even"><p>追加したGridFrame</p>
+</dd>
+<dt class="field-odd">戻り値の型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame">GridFrame</a></p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_add_prefix</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="s2">&quot;test_&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_add_prefix</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">[&#39;test_a&#39;, &#39;test_b&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><span class="pre">pandas3d.frame.frame.GridFrame</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><span class="pre">pandas3d.frame.frame.GridFrame</span></a></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#GridFrame.append"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.append" title="この定義へのパーマリンク"></a></dt>
+<dd><p>追加する</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ</dt>
+<dd class="field-odd"><p><strong>gf</strong> (<a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><em>GridFrame</em></a>) -- 追加するGridFrame</p>
+</dd>
+<dt class="field-even">戻り値</dt>
+<dd class="field-even"><p>追加したGridFrame</p>
+</dd>
+<dt class="field-odd">戻り値の型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame">GridFrame</a></p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf2</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_append</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gf2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_append</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">[&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_append</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(3, 4, 4)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gf_append_empty</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_append_empty</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">[&#39;a&#39;, &#39;b&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_append_empty</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(3, 4, 2)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gf</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">AssertionError</span>: <span class="n">キーが重複しています</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.check_isfinite">
+<span class="sig-name descname"><span class="pre">check_isfinite</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#GridFrame.check_isfinite"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.check_isfinite" title="この定義へのパーマリンク"></a></dt>
+<dd><p>nan, inf, -infが含まれている場合に例外を投げる</p>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GridFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]]),</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">check_isfinite</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">nanやinfが含まれています1,0,0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.columns">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">columns</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.columns" title="この定義へのパーマリンク"></a></dt>
+<dd><p>カラム名を返す</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値</dt>
+<dd class="field-odd"><p>カラム名</p>
+</dd>
+<dt class="field-even">戻り値の型</dt>
+<dd class="field-even"><p>List(str)</p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">[&#39;a&#39;, &#39;b&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="go">&lt;class &#39;list&#39;&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><span class="pre">pandas3d.frame.frame.GridFrame</span></a></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#GridFrame.copy"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.copy" title="この定義へのパーマリンク"></a></dt>
+<dd><p>コピーする</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値</dt>
+<dd class="field-odd"><p>コピーしたGridFrame</p>
+</dd>
+<dt class="field-even">戻り値の型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame">GridFrame</a></p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_copy</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_copy</span> <span class="ow">is</span> <span class="n">gf</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_copy</span> <span class="o">==</span> <span class="n">gf</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_copy</span><span class="o">.</span><span class="n">values</span> <span class="ow">is</span> <span class="n">gf</span><span class="o">.</span><span class="n">values</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">gf_copy</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">gf</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_copy</span><span class="o">.</span><span class="n">columns</span> <span class="ow">is</span> <span class="n">gf</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_copy</span><span class="o">.</span><span class="n">columns</span> <span class="o">==</span> <span class="n">gf</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.draw_distribution">
+<span class="sig-name descname"><span class="pre">draw_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'png'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#GridFrame.draw_distribution"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.draw_distribution" title="この定義へのパーマリンク"></a></dt>
+<dd><p>分布を画像として保存する</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_dir</strong> (<em>Path</em>) -- 描画した画像を保存するディレクトリ</p></li>
+<li><p><strong>is_axis</strong> (<em>bool</em>) -- 分布を描画するかどうか</p></li>
+<li><p><strong>extension</strong> (<em>str</em>) -- 拡張子</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.extract_columns_endswith">
+<span class="sig-name descname"><span class="pre">extract_columns_endswith</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">txt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><span class="pre">pandas3d.frame.frame.GridFrame</span></a></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#GridFrame.extract_columns_endswith"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.extract_columns_endswith" title="この定義へのパーマリンク"></a></dt>
+<dd><p>txtで終わるカラムを抽出する</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ</dt>
+<dd class="field-odd"><p><strong>txt</strong> (<em>str</em>) -- 抽出する文字列</p>
+</dd>
+<dt class="field-even">戻り値</dt>
+<dd class="field-even"><p>抽出したGridFrame</p>
+</dd>
+<dt class="field-odd">戻り値の型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame">GridFrame</a></p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;test_a&quot;</span><span class="p">,</span> <span class="s2">&quot;test_b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_extract</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">extract_columns_endswith</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_extract</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">[&#39;test_a&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_extract</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(3, 4, 1)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.extract_columns_startswith">
+<span class="sig-name descname"><span class="pre">extract_columns_startswith</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">txt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><span class="pre">pandas3d.frame.frame.GridFrame</span></a></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#GridFrame.extract_columns_startswith"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.extract_columns_startswith" title="この定義へのパーマリンク"></a></dt>
+<dd><p>txtで始まるカラムを抽出する</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ</dt>
+<dd class="field-odd"><p><strong>txt</strong> (<em>str</em>) -- 抽出する文字列</p>
+</dd>
+<dt class="field-even">戻り値</dt>
+<dd class="field-even"><p>抽出したGridFrame</p>
+</dd>
+<dt class="field-odd">戻り値の型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame">GridFrame</a></p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;a_test&quot;</span><span class="p">,</span> <span class="s2">&quot;b_test&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_extract</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">extract_columns_startswith</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_extract</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">[&#39;a_test&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf_extract</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(3, 4, 1)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.iloc">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">iloc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pandas3d.frame.frame.Iloc" title="pandas3d.frame.frame.Iloc"><span class="pre">pandas3d.frame.frame.Iloc</span></a></em><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.iloc" title="この定義へのパーマリンク"></a></dt>
+<dd><p>インデクシング</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値</dt>
+<dd class="field-odd"><p>インデクシングされたGridFrame</p>
+</dd>
+<dt class="field-even">戻り値の型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame">GridFrame</a></p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">&lt;class &#39;frame.GridFrame&#39;&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.shape">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.shape" title="この定義へのパーマリンク"></a></dt>
+<dd><p>shapeを返す</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値</dt>
+<dd class="field-odd"><p>shape</p>
+</dd>
+<dt class="field-even">戻り値の型</dt>
+<dd class="field-even"><p>Tuple[int, ...]</p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(3, 4, 2)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.to_pandas">
+<span class="sig-name descname"><span class="pre">to_pandas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#GridFrame.to_pandas"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.to_pandas" title="この定義へのパーマリンク"></a></dt>
+<dd><p>pandasのDataFrameに変換する</p>
+<ul class="simple">
+<li><p>gf:shape(a, b, c) -&gt; pd.shape(a * b, c)</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値</dt>
+<dd class="field-odd"><p>pandasのDataFrame</p>
+</dd>
+<dt class="field-even">戻り値の型</dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="go">[&#39;a&#39;, &#39;b&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.GridFrame.values">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#pandas3d.frame.frame.GridFrame.values" title="この定義へのパーマリンク"></a></dt>
+<dd><p>pandasのvaluesに相当</p>
+<dl class="field-list simple">
+<dt class="field-odd">戻り値</dt>
+<dd class="field-odd"><p>配列部を返す</p>
+</dd>
+<dt class="field-even">戻り値の型</dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">GridFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="n">array</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="go">&lt;class &#39;numpy.ndarray&#39;&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.Iloc">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pandas3d.frame.frame.</span></span><span class="sig-name descname"><span class="pre">Iloc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><span class="pre">pandas3d.frame.frame.GridFrame</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#Iloc"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.Iloc" title="この定義へのパーマリンク"></a></dt>
+<dd><p>ベースクラス: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>インデクシングを行うクラス</p>
+<ul class="simple">
+<li><p>gf.ilocで呼ばれる</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ</dt>
+<dd class="field-odd"><p><strong>gf</strong> (<a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><em>GridFrame</em></a>) -- GridFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.check_nan">
+<span class="sig-prename descclassname"><span class="pre">pandas3d.frame.frame.</span></span><span class="sig-name descname"><span class="pre">check_nan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#check_nan"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.check_nan" title="この定義へのパーマリンク"></a></dt>
+<dd><p>valuesがnanの場合に例外を投げるデコレーター用の関数</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em>) -- 実行する関数</p>
+</dd>
+<dt class="field-even">戻り値</dt>
+<dd class="field-even"><p>実行する関数</p>
+</dd>
+<dt class="field-odd">戻り値の型</dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">例外</dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- nanが含まれている場合</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.empty">
+<span class="sig-prename descclassname"><span class="pre">pandas3d.frame.frame.</span></span><span class="sig-name descname"><span class="pre">empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><span class="pre">pandas3d.frame.frame.GridFrame</span></a></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#empty"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.empty" title="この定義へのパーマリンク"></a></dt>
+<dd><p>空のGridFrameを作成する</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shape</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em>) -- shape</p></li>
+<li><p><strong>columns</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>List</em><em>, </em><em>str</em><em>]</em><em>]</em>) -- カラム名</p></li>
+</ul>
+</dd>
+<dt class="field-even">戻り値</dt>
+<dd class="field-even"><p>空のGridFrame</p>
+</dd>
+<dt class="field-odd">戻り値の型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame">GridFrame</a></p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(3, 4, 0)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.from_pandas">
+<span class="sig-prename descclassname"><span class="pre">pandas3d.frame.frame.</span></span><span class="sig-name descname"><span class="pre">from_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><span class="pre">pandas3d.frame.frame.GridFrame</span></a></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#from_pandas"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.from_pandas" title="この定義へのパーマリンク"></a></dt>
+<dd><p>pandasのDataFrameからGridFrameを作成する</p>
+<ul class="simple">
+<li><p>カラムはそのまま</p></li>
+<li><p>shape=(a, b)のとき(a * b, c) -&gt; (a , b, c)に変換する</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) -- pandasのDataFrame</p></li>
+<li><p><strong>shape</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) -- shape</p></li>
+</ul>
+</dd>
+<dt class="field-even">戻り値</dt>
+<dd class="field-even"><p>GridFrame</p>
+</dd>
+<dt class="field-odd">戻り値の型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame">GridFrame</a></p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">from_pandas</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(3, 4, 2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">[&#39;a&#39;, &#39;b&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pandas3d.frame.frame.zeros">
+<span class="sig-prename descclassname"><span class="pre">pandas3d.frame.frame.</span></span><span class="sig-name descname"><span class="pre">zeros</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame"><span class="pre">pandas3d.frame.frame.GridFrame</span></a></span></span><a class="reference internal" href="../_modules/pandas3d/frame/frame.html#zeros"><span class="viewcode-link"><span class="pre">[ソース]</span></span></a><a class="headerlink" href="#pandas3d.frame.frame.zeros" title="この定義へのパーマリンク"></a></dt>
+<dd><p>0を入れるGridFrameを作成する</p>
+<dl class="field-list simple">
+<dt class="field-odd">パラメータ</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shape</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em>) -- shape</p></li>
+<li><p><strong>columns</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>List</em><em>, </em><em>str</em><em>]</em><em>]</em>) -- カラム名</p></li>
+</ul>
+</dd>
+<dt class="field-even">戻り値</dt>
+<dd class="field-even"><p>0を入れたGridFrame</p>
+</dd>
+<dt class="field-odd">戻り値の型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pandas3d.frame.frame.GridFrame" title="pandas3d.frame.frame.GridFrame">GridFrame</a></p>
+</dd>
+</dl>
+<p class="rubric">サンプル</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gf</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-pandas3d.frame">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pandas3d.frame" title="このヘッドラインへのパーマリンク"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pandas3d.html" class="btn btn-neutral float-left" title="pandas3d package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../readme_link.html" class="btn btn-neutral float-right" title="[readme]pandas3d" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, eycjur.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
