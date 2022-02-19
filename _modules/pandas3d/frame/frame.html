@@ -118,7 +118,7 @@
 <span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
 <span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
 <span class="sd">            &gt;&gt;&gt; type(gf)</span>
-<span class="sd">            &lt;class &#39;frame.GridFrame&#39;&gt;</span>
+<span class="sd">            &lt;class &#39;pandas3d.frame.frame.GridFrame&#39;&gt;</span>
 
 <span class="sd">            &gt;&gt;&gt; GridFrame(np.array([1, 2, 3]))</span>
 <span class="sd">            Traceback (most recent call last):</span>
@@ -184,7 +184,7 @@
 <span class="sd">            &gt;&gt;&gt; type(gf[&quot;a&quot;])</span>
 <span class="sd">            &lt;class &#39;numpy.ndarray&#39;&gt;</span>
 <span class="sd">            &gt;&gt;&gt; type(gf[[&quot;a&quot;]])</span>
-<span class="sd">            &lt;class &#39;frame.GridFrame&#39;&gt;</span>
+<span class="sd">            &lt;class &#39;pandas3d.frame.frame.GridFrame&#39;&gt;</span>
 <span class="sd">            &gt;&gt;&gt; gf[&quot;a&quot;]</span>
 <span class="sd">            array([[ 0.,  2.,  4.,  6.],</span>
 <span class="sd">                   [ 8., 10., 12., 14.],</span>
@@ -365,7 +365,7 @@
 <span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
 <span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
 <span class="sd">            &gt;&gt;&gt; type(gf.iloc[0, 0, 0:1])</span>
-<span class="sd">            &lt;class &#39;frame.GridFrame&#39;&gt;</span>
+<span class="sd">            &lt;class &#39;pandas3d.frame.frame.GridFrame&#39;&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Iloc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
