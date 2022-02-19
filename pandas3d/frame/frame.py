@@ -49,7 +49,7 @@ class GridFrame:
             >>> array = np.arange(24).reshape(3, 4, 2)
             >>> gf = GridFrame(array, ["a", "b"])
             >>> type(gf)
-            <class 'frame.GridFrame'>
+            <class 'pandas3d.frame.frame.GridFrame'>
 
             >>> GridFrame(np.array([1, 2, 3]))
             Traceback (most recent call last):
@@ -115,7 +115,7 @@ class GridFrame:
             >>> type(gf["a"])
             <class 'numpy.ndarray'>
             >>> type(gf[["a"]])
-            <class 'frame.GridFrame'>
+            <class 'pandas3d.frame.frame.GridFrame'>
             >>> gf["a"]
             array([[ 0.,  2.,  4.,  6.],
                    [ 8., 10., 12., 14.],
@@ -296,7 +296,7 @@ class GridFrame:
             >>> array = np.arange(24).reshape(3, 4, 2)
             >>> gf = GridFrame(array, ["a", "b"])
             >>> type(gf.iloc[0, 0, 0:1])
-            <class 'frame.GridFrame'>
+            <class 'pandas3d.frame.frame.GridFrame'>
         """
         return Iloc(self)
 
