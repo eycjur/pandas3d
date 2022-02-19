@@ -13,7 +13,7 @@ poetry add git+https://github.com/eycjur/pandas3d.git#main
 ```python
 import numpy as np
 import pandas3d as pd3
-array = np.arange(24).reshape(3, 4, 2)
+array = np.arange(12).reshape(2, 3, 2)
 gf = pd3.GridFrame(data=array, columns=['a', 'b'])
 gf
 # a
@@ -24,8 +24,6 @@ gf
 #  [ 7.  9. 11.]]
 # shape(2, 3, 2), dtype('float32')
 
-array = np.arange(12).reshape(2, 3, 2)
-gf = pd3.GridFrame(data=array, columns=['a', 'b'])
 gf["c"] = gf["a"] + gf["b"]
 gf
 # a
