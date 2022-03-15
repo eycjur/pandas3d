@@ -1,4 +1,5 @@
 """pandasのDataFrameを画像データ用に拡張したもの"""
+import copy
 from functools import wraps
 from pathlib import Path
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union, overload
@@ -79,7 +80,7 @@ class GridFrame:
         # カラム名が重複していないかチェック
         assert len(set(columns)) == len(columns), "カラム名はユニークである必要があります"
 
-        self.__values = data.astype("float32")
+        self.__values = data
         self.__columns = columns  # type: ignore
 
     @overload
@@ -117,9 +118,9 @@ class GridFrame:
             >>> type(gf[["a"]])
             <class 'pandas3d.frame.frame.GridFrame'>
             >>> gf["a"]
-            array([[ 0.,  2.,  4.,  6.],
-                   [ 8., 10., 12., 14.],
-                   [16., 18., 20., 22.]], dtype=float32)
+            array([[ 0,  2,  4,  6],
+                   [ 8, 10, 12, 14],
+                   [16, 18, 20, 22]])
             >>> gf[["a", "b"]].shape == array.shape
             True
         """
@@ -211,13 +212,13 @@ class GridFrame:
             ...     print(c)
             ...     print(v)
             a
-            [[ 0.  2.  4.  6.]
-             [ 8. 10. 12. 14.]
-             [16. 18. 20. 22.]]
+            [[ 0  2  4  6]
+             [ 8 10 12 14]
+             [16 18 20 22]]
             b
-            [[ 1.  3.  5.  7.]
-             [ 9. 11. 13. 15.]
-             [17. 19. 21. 23.]]
+            [[ 1  3  5  7]
+             [ 9 11 13 15]
+             [17 19 21 23]]
         """
         for c in self.__columns:
             yield (c, self[c])
@@ -430,6 +431,9 @@ class GridFrame:
         Returns:
             GridFrame: コピーしたGridFrame
 
+        Warning:
+            GridFrameのコピーはdeepcopyです。
+
         Examples:
             >>> array = np.arange(24).reshape(3, 4, 2)
             >>> gf = GridFrame(array, ["a", "b"])
@@ -448,7 +452,7 @@ class GridFrame:
             True
         """
         return GridFrame(
-            data=self.__values.copy(), columns=self.__columns.copy()  # type: ignore
+            data=copy.deepcopy(self.__values), columns=copy.deepcopy(self.__columns)
         )
 
     def add_prefix(self, prefix: str) -> "GridFrame":
