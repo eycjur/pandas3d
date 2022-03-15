@@ -68,6 +68,7 @@
              
   <h1>pandas3d.frame.frame のソースコード</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;pandasのDataFrameを画像データ用に拡張したもの&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">overload</span>
@@ -148,7 +149,7 @@
         <span class="c1"># カラム名が重複していないかチェック</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="s2">&quot;カラム名はユニークである必要があります&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__values</span> <span class="o">=</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span> <span class="o">=</span> <span class="n">columns</span>  <span class="c1"># type: ignore</span>
 
     <span class="nd">@overload</span>
@@ -186,9 +187,9 @@
 <span class="sd">            &gt;&gt;&gt; type(gf[[&quot;a&quot;]])</span>
 <span class="sd">            &lt;class &#39;pandas3d.frame.frame.GridFrame&#39;&gt;</span>
 <span class="sd">            &gt;&gt;&gt; gf[&quot;a&quot;]</span>
-<span class="sd">            array([[ 0.,  2.,  4.,  6.],</span>
-<span class="sd">                   [ 8., 10., 12., 14.],</span>
-<span class="sd">                   [16., 18., 20., 22.]], dtype=float32)</span>
+<span class="sd">            array([[ 0,  2,  4,  6],</span>
+<span class="sd">                   [ 8, 10, 12, 14],</span>
+<span class="sd">                   [16, 18, 20, 22]])</span>
 <span class="sd">            &gt;&gt;&gt; gf[[&quot;a&quot;, &quot;b&quot;]].shape == array.shape</span>
 <span class="sd">            True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -280,13 +281,13 @@
 <span class="sd">            ...     print(c)</span>
 <span class="sd">            ...     print(v)</span>
 <span class="sd">            a</span>
-<span class="sd">            [[ 0.  2.  4.  6.]</span>
-<span class="sd">             [ 8. 10. 12. 14.]</span>
-<span class="sd">             [16. 18. 20. 22.]]</span>
+<span class="sd">            [[ 0  2  4  6]</span>
+<span class="sd">             [ 8 10 12 14]</span>
+<span class="sd">             [16 18 20 22]]</span>
 <span class="sd">            b</span>
-<span class="sd">            [[ 1.  3.  5.  7.]</span>
-<span class="sd">             [ 9. 11. 13. 15.]</span>
-<span class="sd">             [17. 19. 21. 23.]]</span>
+<span class="sd">            [[ 1  3  5  7]</span>
+<span class="sd">             [ 9 11 13 15]</span>
+<span class="sd">             [17 19 21 23]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">:</span>
             <span class="k">yield</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
@@ -499,6 +500,9 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            GridFrame: コピーしたGridFrame</span>
 
+<span class="sd">        Warning:</span>
+<span class="sd">            GridFrameのコピーはdeepcopyです。</span>
+
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
 <span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
@@ -517,7 +521,7 @@
 <span class="sd">            True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">)</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GridFrame.add_prefix"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame.add_prefix">[ドキュメント]</a>    <span class="k">def</span> <span class="nf">add_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">:</span>
