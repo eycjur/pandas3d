@@ -93,7 +93,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="n">gf</span><span class="p">:</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_wrapper</span><span class="p">(</span><span class="n">gf</span><span class="p">:</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">gf</span><span class="o">.</span><span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;self.__values is None&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">gf</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -102,11 +102,56 @@
 
 
 <div class="viewcode-block" id="GridFrame"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame">[ドキュメント]</a><span class="k">class</span> <span class="nc">GridFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;pandasのGridFrameに相当</span>
+    <span class="sd">&quot;&quot;&quot;pandasのDataFrameに相当</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data (np.ndarray): データ</span>
 <span class="sd">        columns (List): カラム名</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">        &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">        &gt;&gt;&gt; type(gf)</span>
+<span class="sd">        &lt;class &#39;pandas3d.frame.frame.GridFrame&#39;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; gf</span>
+<span class="sd">        a</span>
+<span class="sd">        [[ 0  2  4  6]</span>
+<span class="sd">         [ 8 10 12 14]</span>
+<span class="sd">         [16 18 20 22]]</span>
+<span class="sd">        b</span>
+<span class="sd">        [[ 1  3  5  7]</span>
+<span class="sd">         [ 9 11 13 15]</span>
+<span class="sd">         [17 19 21 23]]</span>
+<span class="sd">        shape(3, 4, 2), dtype(&#39;int64&#39;)</span>
+
+<span class="sd">        &gt;&gt;&gt; GridFrame(columns=[&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        AssertionError: データのサイズとカラム数が不整合です</span>
+
+<span class="sd">        &gt;&gt;&gt; GridFrame(np.arange(3), [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        AssertionError: データの次元は2or3である必要があります</span>
+
+<span class="sd">        &gt;&gt;&gt; GridFrame(np.arange(3).reshape(1, 3), [&quot;a&quot;])</span>
+<span class="sd">        a</span>
+<span class="sd">        [[0 1 2]]</span>
+<span class="sd">        shape(1, 3, 1), dtype(&#39;int64&#39;)</span>
+
+<span class="sd">        &gt;&gt;&gt; GridFrame(np.arange(3).reshape(1, 3, 1), [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;])</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        AssertionError: データのサイズとカラム数が不整合です</span>
+
+<span class="sd">        &gt;&gt;&gt; GridFrame(np.arange(3).reshape(1, 1, 3), [&quot;a&quot;, &quot;b&quot;, &quot;b&quot;])</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        AssertionError: カラム名はユニークである必要があります</span>
+
+<span class="sd">        &gt;&gt;&gt; GridFrame()</span>
+<span class="sd">        []</span>
+<span class="sd">        None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -114,18 +159,6 @@
         <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
-<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
-<span class="sd">            &gt;&gt;&gt; type(gf)</span>
-<span class="sd">            &lt;class &#39;pandas3d.frame.frame.GridFrame&#39;&gt;</span>
-
-<span class="sd">            &gt;&gt;&gt; GridFrame(np.array([1, 2, 3]))</span>
-<span class="sd">            Traceback (most recent call last):</span>
-<span class="sd">            ...</span>
-<span class="sd">            AssertionError: (3,)!=0</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -135,7 +168,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">columns</span>  <span class="c1"># type: ignore</span>
             <span class="k">return</span>
 
-        <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">は2or3である必要があります&quot;</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;データの次元は2or3である必要があります&quot;</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
@@ -144,7 +177,7 @@
             <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">columns</span><span class="p">]</span>
 
         <span class="c1"># カラム数が一致しているか</span>
-        <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="s2">&quot;データのサイズとカラム数が不整合です&quot;</span>
 
         <span class="c1"># カラム名が重複していないかチェック</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">),</span> <span class="s2">&quot;カラム名はユニークである必要があります&quot;</span>
@@ -365,7 +398,7 @@
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
 <span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
-<span class="sd">            &gt;&gt;&gt; type(gf.iloc[0, 0, 0:1])</span>
+<span class="sd">            &gt;&gt;&gt; type(gf.iloc[[0], [0], 0:1])</span>
 <span class="sd">            &lt;class &#39;pandas3d.frame.frame.GridFrame&#39;&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Iloc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -395,8 +428,40 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            GridFrame: 足し算したGridFrame</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
+<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf2 = GridFrame(array, [&quot;c&quot;, &quot;d&quot;])</span>
+<span class="sd">            &gt;&gt;&gt; gf_append = gf + gf2</span>
+<span class="sd">            &gt;&gt;&gt; gf_append.columns</span>
+<span class="sd">            [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; gf_append.shape</span>
+<span class="sd">            (3, 4, 4)</span>
+
+<span class="sd">            &gt;&gt;&gt; gf_append_empty = GridFrame() + gf</span>
+<span class="sd">            &gt;&gt;&gt; gf_append_empty.columns</span>
+<span class="sd">            [&#39;a&#39;, &#39;b&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; gf_append_empty.shape</span>
+<span class="sd">            (3, 4, 2)</span>
+
+<span class="sd">            &gt;&gt;&gt; gf + gf</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">            AssertionError: キーが重複しています</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gf</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">gf</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">gf</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="s2">&quot;サイズが違います&quot;</span>
+
+        <span class="n">col_append</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span> <span class="o">+</span> <span class="n">gf</span><span class="o">.</span><span class="n">__columns</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_append</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">col_append</span><span class="p">)),</span> <span class="s2">&quot;キーが重複しています&quot;</span>
+
+        <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">,</span> <span class="n">gf</span><span class="o">.</span><span class="n">__values</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">col_append</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -456,42 +521,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            GridFrame: 追加したGridFrame</span>
-
-<span class="sd">        Examples:</span>
-<span class="sd">            &gt;&gt;&gt; array = np.arange(24).reshape(3, 4, 2)</span>
-<span class="sd">            &gt;&gt;&gt; gf = GridFrame(array, [&quot;a&quot;, &quot;b&quot;])</span>
-<span class="sd">            &gt;&gt;&gt; gf2 = GridFrame(array, [&quot;c&quot;, &quot;d&quot;])</span>
-<span class="sd">            &gt;&gt;&gt; gf_append = gf.append(gf2)</span>
-<span class="sd">            &gt;&gt;&gt; gf_append.columns</span>
-<span class="sd">            [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;]</span>
-<span class="sd">            &gt;&gt;&gt; gf_append.shape</span>
-<span class="sd">            (3, 4, 4)</span>
-
-<span class="sd">            &gt;&gt;&gt; gf_append_empty = GridFrame().append(gf)</span>
-<span class="sd">            &gt;&gt;&gt; gf_append_empty.columns</span>
-<span class="sd">            [&#39;a&#39;, &#39;b&#39;]</span>
-<span class="sd">            &gt;&gt;&gt; gf_append_empty.shape</span>
-<span class="sd">            (3, 4, 2)</span>
-
-<span class="sd">            &gt;&gt;&gt; gf.append(gf)</span>
-<span class="sd">            Traceback (most recent call last):</span>
-<span class="sd">            ...</span>
-<span class="sd">            AssertionError: キーが重複しています</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">gf</span>
-
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">gf</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;サイズが違います</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">gf</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-
-        <span class="n">col_append</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span> <span class="o">+</span> <span class="n">gf</span><span class="o">.</span><span class="n">__columns</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_append</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">col_append</span><span class="p">)),</span> <span class="s2">&quot;キーが重複しています&quot;</span>
-
-        <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">,</span> <span class="n">gf</span><span class="o">.</span><span class="n">__values</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
-            <span class="n">columns</span><span class="o">=</span><span class="n">col_append</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">gf</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GridFrame.copy"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame.copy">[ドキュメント]</a>    <span class="nd">@check_nan</span>
     <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GridFrame&quot;</span><span class="p">:</span>
@@ -617,14 +648,10 @@
 <span class="sd">            &gt;&gt;&gt; GridFrame(np.array([[np.inf]]), [&quot;a&quot;]).check_isfinite()</span>
 <span class="sd">            Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
-<span class="sd">            ValueError: nanやinfが含まれています1,0,0</span>
+<span class="sd">            ValueError: nanやinfが含まれています</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;nanやinfが含まれています</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isposinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">,&quot;</span>  <span class="c1"># type: ignore</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isneginf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">,&quot;</span>  <span class="c1"># type: ignore</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__values</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># type: ignore</span>
-            <span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;nanやinfが含まれています&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GridFrame.draw_distribution"><a class="viewcode-back" href="../../../source/pandas3d.frame.html#pandas3d.frame.frame.GridFrame.draw_distribution">[ドキュメント]</a>    <span class="nd">@check_nan</span>
     <span class="k">def</span> <span class="nf">draw_distribution</span><span class="p">(</span>
@@ -764,7 +791,7 @@
 <span class="sd">        [&#39;a&#39;, &#39;b&#39;]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;shapeが不適切です</span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;shapeが不適切です&quot;</span>
     <span class="k">return</span> <span class="n">GridFrame</span><span class="p">(</span>
         <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]),</span> <span class="n">columns</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
     <span class="p">)</span></div>
