@@ -55,7 +55,7 @@ class GridFrame:
             >>> GridFrame(np.array([1, 2, 3]))
             Traceback (most recent call last):
             ...
-            AssertionError: (3,)!=0
+            AssertionError: (3,)
         """
         if columns is None:
             columns = []
@@ -75,7 +75,7 @@ class GridFrame:
             columns = [columns]
 
         # カラム数が一致しているか
-        assert data.shape[-1] == len(columns), f"{data.shape}!={len(columns)}"
+        assert data.shape[-1] == len(columns), f"{data.shape}"  # type: ignore
 
         # カラム名が重複していないかチェック
         assert len(set(columns)) == len(columns), "カラム名はユニークである必要があります"
@@ -420,7 +420,7 @@ class GridFrame:
         assert len(col_append) == len(set(col_append)), "キーが重複しています"
 
         return GridFrame(
-            data=np.concatenate((self.__values, gf.__values), axis=-1),  # type: ignore
+            data=np.concatenate((self.__values, gf.__values), axis=-1),
             columns=col_append,
         )
 
