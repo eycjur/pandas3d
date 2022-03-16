@@ -41,7 +41,6 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.todo",
     "sphinx.ext.napoleon",
-    "sphinx_click",
     "myst_parser",
 ]
 
