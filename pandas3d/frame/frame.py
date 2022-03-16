@@ -24,7 +24,7 @@ def check_nan(func: Callable) -> Callable:
     """
 
     @wraps(func)
-    def _wrapper(gf: "GridFrame", *args: tuple, **kwargs: dict[Any, Any]) -> Callable:
+    def _wrapper(gf: "GridFrame", *args: tuple, **kwargs: dict) -> Callable:
         if gf.values is None:
             raise ValueError("self.__values is None")
         return func(gf, *args, **kwargs)
@@ -33,11 +33,56 @@ def check_nan(func: Callable) -> Callable:
 
 
 class GridFrame:
-    """pandasのGridFrameに相当
+    """pandasのDataFrameに相当
 
     Args:
         data (np.ndarray): データ
         columns (List): カラム名
+
+    Examples:
+        >>> array = np.arange(24).reshape(3, 4, 2)
+        >>> gf = GridFrame(array, ["a", "b"])
+        >>> type(gf)
+        <class 'pandas3d.frame.frame.GridFrame'>
+        >>> gf
+        a
+        [[ 0  2  4  6]
+         [ 8 10 12 14]
+         [16 18 20 22]]
+        b
+        [[ 1  3  5  7]
+         [ 9 11 13 15]
+         [17 19 21 23]]
+        shape(3, 4, 2), dtype('int64')
+
+        >>> GridFrame(columns=["a", "b"])
+        Traceback (most recent call last):
+        ...
+        AssertionError: データのサイズとカラム数が不整合です
+
+        >>> GridFrame(np.arange(3), ["a", "b", "c"])
+        Traceback (most recent call last):
+        ...
+        AssertionError: データの次元は2or3である必要があります
+
+        >>> GridFrame(np.arange(3).reshape(1, 3), ["a"])
+        a
+        [[0 1 2]]
+        shape(1, 3, 1), dtype('int64')
+
+        >>> GridFrame(np.arange(3).reshape(1, 3, 1), ["a", "b", "c"])
+        Traceback (most recent call last):
+        ...
+        AssertionError: データのサイズとカラム数が不整合です
+
+        >>> GridFrame(np.arange(3).reshape(1, 1, 3), ["a", "b", "b"])
+        Traceback (most recent call last):
+        ...
+        AssertionError: カラム名はユニークである必要があります
+
+        >>> GridFrame()
+        []
+        None
     """
 
     def __init__(
@@ -45,18 +90,6 @@ class GridFrame:
         data: Optional[np.ndarray] = None,
         columns: Optional[Union[List[str], str]] = None,
     ) -> None:
-        """
-        Examples:
-            >>> array = np.arange(24).reshape(3, 4, 2)
-            >>> gf = GridFrame(array, ["a", "b"])
-            >>> type(gf)
-            <class 'pandas3d.frame.frame.GridFrame'>
-
-            >>> GridFrame(np.array([1, 2, 3]))
-            Traceback (most recent call last):
-            ...
-            AssertionError: (3,)!=0
-        """
         if columns is None:
             columns = []
 
@@ -66,7 +99,7 @@ class GridFrame:
             self.__columns: list[str] = columns  # type: ignore
             return
 
-        assert data.ndim != 3 or data.ndim != 2, f"{data.ndim}は2or3である必要があります"
+        assert data.ndim == 3 or data.ndim == 2, "データの次元は2or3である必要があります"
         if data.ndim == 2:
             data = np.expand_dims(data, axis=-1)
 
@@ -75,7 +108,7 @@ class GridFrame:
             columns = [columns]
 
         # カラム数が一致しているか
-        assert data.shape[-1] == len(columns), f"{data.shape}!={len(columns)}"
+        assert data.shape[-1] == len(columns), "データのサイズとカラム数が不整合です"
 
         # カラム名が重複していないかチェック
         assert len(set(columns)) == len(columns), "カラム名はユニークである必要があります"
@@ -296,7 +329,7 @@ class GridFrame:
         Examples:
             >>> array = np.arange(24).reshape(3, 4, 2)
             >>> gf = GridFrame(array, ["a", "b"])
-            >>> type(gf.iloc[0, 0, 0:1])
+            >>> type(gf.iloc[[0], [0], 0:1])
             <class 'pandas3d.frame.frame.GridFrame'>
         """
         return Iloc(self)
@@ -326,8 +359,40 @@ class GridFrame:
 
         Returns:
             GridFrame: 足し算したGridFrame
+
+        Examples:
+            >>> array = np.arange(24).reshape(3, 4, 2)
+            >>> gf = GridFrame(array, ["a", "b"])
+            >>> gf2 = GridFrame(array, ["c", "d"])
+            >>> gf_append = gf + gf2
+            >>> gf_append.columns
+            ['a', 'b', 'c', 'd']
+            >>> gf_append.shape
+            (3, 4, 4)
+
+            >>> gf_append_empty = GridFrame() + gf
+            >>> gf_append_empty.columns
+            ['a', 'b']
+            >>> gf_append_empty.shape
+            (3, 4, 2)
+
+            >>> gf + gf
+            Traceback (most recent call last):
+            ...
+            AssertionError: キーが重複しています
         """
-        return self.append(gf)
+        if self.__values is None:
+            return gf
+
+        assert self.shape[:2] == gf.shape[:2], "サイズが違います"
+
+        col_append = self.__columns + gf.__columns
+        assert len(col_append) == len(set(col_append)), "キーが重複しています"
+
+        return GridFrame(
+            data=np.concatenate((self.__values, gf.__values), axis=-1),  # type: ignore
+            columns=col_append,
+        )
 
     @property
     def values(self) -> np.ndarray:
@@ -387,42 +452,8 @@ class GridFrame:
 
         Returns:
             GridFrame: 追加したGridFrame
-
-        Examples:
-            >>> array = np.arange(24).reshape(3, 4, 2)
-            >>> gf = GridFrame(array, ["a", "b"])
-            >>> gf2 = GridFrame(array, ["c", "d"])
-            >>> gf_append = gf.append(gf2)
-            >>> gf_append.columns
-            ['a', 'b', 'c', 'd']
-            >>> gf_append.shape
-            (3, 4, 4)
-
-            >>> gf_append_empty = GridFrame().append(gf)
-            >>> gf_append_empty.columns
-            ['a', 'b']
-            >>> gf_append_empty.shape
-            (3, 4, 2)
-
-            >>> gf.append(gf)
-            Traceback (most recent call last):
-            ...
-            AssertionError: キーが重複しています
         """
-        if self.__values is None:
-            return gf
-
-        assert (
-            self.shape[:2] == gf.shape[:2]
-        ), f"サイズが違います{self.shape[:2]},{gf.shape[:2]}"
-
-        col_append = self.__columns + gf.__columns
-        assert len(col_append) == len(set(col_append)), "キーが重複しています"
-
-        return GridFrame(
-            data=np.concatenate((self.__values, gf.__values), axis=-1),  # type: ignore
-            columns=col_append,
-        )
+        return self.__add__(gf)
 
     @check_nan
     def copy(self) -> "GridFrame":
@@ -548,14 +579,10 @@ class GridFrame:
             >>> GridFrame(np.array([[np.inf]]), ["a"]).check_isfinite()
             Traceback (most recent call last):
             ...
-            ValueError: nanやinfが含まれています1,0,0
+            ValueError: nanやinfが含まれています
         """
         if (~np.isfinite(self.__values)).sum() != 0:  # type: ignore
-            raise ValueError(
-                f"nanやinfが含まれています{np.isposinf(self.__values).sum()},"  # type: ignore
-                + f"{np.isneginf(self.__values).sum()},"  # type: ignore
-                + f"{np.isnan(self.__values).sum()}"  # type: ignore
-            )
+            raise ValueError("nanやinfが含まれています")
 
     @check_nan
     def draw_distribution(
@@ -695,7 +722,7 @@ def from_pandas(df: pd.DataFrame, shape: tuple[int, int]) -> GridFrame:
         ['a', 'b']
     """
     data = df.values
-    assert np.prod(shape) == data.shape[0], f"shapeが不適切です{shape},{data.shape[0]}"
+    assert np.prod(shape) == data.shape[0], "shapeが不適切です"
     return GridFrame(
         data=data.reshape(list(shape) + [data.shape[-1]]), columns=list(df.columns)
     )
