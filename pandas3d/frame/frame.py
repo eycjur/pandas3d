@@ -2,7 +2,7 @@
 import copy
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, Iterator, List, Optional, Tuple, Union, overload
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union, overload
 
 import numpy as np
 import pandas as pd
@@ -24,7 +24,7 @@ def check_nan(func: Callable) -> Callable:
     """
 
     @wraps(func)
-    def _wrapper(gf: "GridFrame", *args: tuple, **kwargs: dict[Any, Any]) -> Callable:
+    def _wrapper(gf: "GridFrame", *args: Tuple, **kwargs: Dict[Any, Any]) -> Callable:
         if gf.values is None:
             raise ValueError("self.__values is None")
         return func(gf, *args, **kwargs)
@@ -36,8 +36,8 @@ class GridFrame:
     """pandasのGridFrameに相当
 
     Args:
-        data (np.ndarray): データ
-        columns (List): カラム名
+        data (Optional[np.ndarray]): データ
+        columns (Optional[Union[List[str], str]]): カラム名
     """
 
     def __init__(
@@ -63,7 +63,7 @@ class GridFrame:
         if data is None:
             assert len(columns) == 0, "データのサイズとカラム数が不整合です"
             self.__values = None
-            self.__columns: list[str] = columns  # type: ignore
+            self.__columns: List[str] = columns  # type: ignore
             return
 
         assert data.ndim != 3 or data.ndim != 2, f"{data.ndim}は2or3である必要があります"
@@ -88,12 +88,12 @@ class GridFrame:
         ...
 
     @overload
-    def __getitem__(self, index: list) -> "GridFrame":
+    def __getitem__(self, index: List) -> "GridFrame":
         ...
 
     @check_nan  # type: ignore
     def __getitem__(
-        self, index: Union[str, list, tuple]
+        self, index: Union[str, List, Tuple]
     ) -> Union[np.ndarray, "GridFrame"]:
         """インデクシングの処理
 
@@ -107,8 +107,8 @@ class GridFrame:
             str: gf["カラム"]
             int: gf[1]
             slice: gf[1:2]
-            list[Union[str, int]]: gf[["カラム", 1]]
-            tuple[Union[str, int, slice, list[Union[str, int]]]]: gf[2, 2:3, [1, 2]]
+            List[Union[str, int]]: gf[["カラム", 1]]
+            Tuple[Union[str, int, slice, List[Union[str, int]]]]: gf[2, 2:3, [1, 2]]
 
         Examples:
             >>> array = np.arange(24).reshape(3, 4, 2)
@@ -186,7 +186,7 @@ class GridFrame:
             self.__values[..., self.__columns.index(key)] = value
 
         elif (
-            type(key) == list
+            type(key) == List
             and type(key[0]) == str
             and any([k in self.__columns for k in key])
         ):
@@ -199,11 +199,11 @@ class GridFrame:
         self.__columns = gf_.__columns
         self.__values = gf_.__values
 
-    def __iter__(self) -> Iterator[tuple[str, np.ndarray]]:
+    def __iter__(self) -> Iterator[Tuple[str, np.ndarray]]:
         """for文でのイテレータ
 
         Returns:
-            Iterator[tuple[str, np.ndarray]]: カラム名と値のタプル
+            Iterator[Tuple[str, np.ndarray]]: カラム名と値のタプル
 
         Examples:
             >>> array = np.arange(24).reshape(3, 4, 2)
@@ -351,7 +351,7 @@ class GridFrame:
         """カラム名を返す
 
         Returns:
-            List(str): カラム名
+            List[str]: カラム名
 
         Examples:
             >>> array = np.arange(24).reshape(3, 4, 2)
@@ -596,11 +596,11 @@ class Iloc:
     def __init__(self, gf: "GridFrame") -> None:
         self.__gf = gf
 
-    def __getitem__(self, key: Union[int, list, tuple, slice]) -> GridFrame:
+    def __getitem__(self, key: Union[int, List, Tuple, slice]) -> GridFrame:
         """インデクシングを行う
 
         Args:
-            key (Union[int, list, tuple, slice]): インデクシングするkey
+            key (Union[int, List, Tuple, slice]): インデクシングするkey
         """
         if self.__gf.values is None:
             raise ValueError("データがありません")
@@ -616,24 +616,24 @@ class Iloc:
         )
 
     def __setitem__(
-        self, key: Union[int, list, tuple, slice], value: np.ndarray
+        self, key: Union[int, List, Tuple, slice], value: np.ndarray
     ) -> None:
         """インデックスに値を設定する
 
         Args:
-            key (Union[int, list, tuple, slice]): インデクシングするkey
+            key (Union[int, List, Tuple, slice]): インデクシングするkey
             value (np.ndarray): 設定する値
         """
         self.__gf.values[key] = value
 
 
 def zeros(
-    shape: tuple[int, ...], columns: Optional[Union[List, str]] = None
+    shape: Tuple[int, ...], columns: Optional[Union[List, str]] = None
 ) -> GridFrame:
     """0を入れるGridFrameを作成する
 
     Args:
-        shape (tuple[int, ...]): shape
+        shape (Tuple[int, ...]): shape
         columns (Optional[Union[List, str]]): カラム名
 
     Returns:
@@ -645,17 +645,17 @@ def zeros(
         0.0
     """
     if len(shape) == 2:
-        shape = shape + (0,)  # tupleにする
+        shape = shape + (0,)  # Tupleにする
     return GridFrame(np.zeros(shape), columns)
 
 
 def empty(
-    shape: tuple[int, ...], columns: Optional[Union[List, str]] = None
+    shape: Tuple[int, ...], columns: Optional[Union[List, str]] = None
 ) -> GridFrame:
     """空のGridFrameを作成する
 
     Args:
-        shape (tuple[int, ...]): shape
+        shape (Tuple[int, ...]): shape
         columns (Optional[Union[List, str]]): カラム名
 
     Returns:
@@ -673,7 +673,7 @@ def empty(
     return GridFrame(np.empty(shape), columns)
 
 
-def from_pandas(df: pd.DataFrame, shape: tuple[int, int]) -> GridFrame:
+def from_pandas(df: pd.DataFrame, shape: Tuple[int, int]) -> GridFrame:
     """pandasのDataFrameからGridFrameを作成する
 
     - カラムはそのまま
@@ -681,7 +681,7 @@ def from_pandas(df: pd.DataFrame, shape: tuple[int, int]) -> GridFrame:
 
     Args:
         df (pd.DataFrame): pandasのDataFrame
-        shape (tuple[int, int]): shape
+        shape (Tuple[int, int]): shape
 
     Returns:
         GridFrame: GridFrame

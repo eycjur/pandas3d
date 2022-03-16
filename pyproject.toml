@@ -5,15 +5,15 @@ description = ""
 authors = ["eycjur"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-numpy = "^1.22.2"
-pandas = "^1.4.1"
-matplotlib = "^3.5.1"
+python = "3.7.12"
+numpy = "1.21.5"
+pandas = "1.3.5"
+matplotlib = "3.2.2"
 japanize-matplotlib = "^1.1.3"
-click = "^8.0.3"
+click = "^8.0.4"
 typer = "^0.4.0"
 pyyml = "^0.0.2"
-tqdm = "^4.62.3"
+tqdm = "^4.63.0"
 
 [tool.poetry.extras]
 extra = []
@@ -29,7 +29,7 @@ notebook = "^6.4.8"
 jupyterlab = "^3.2.9"
 jupytext = "^1.13.7"
 line-profiler = "^3.4.0"
-Sphinx = "^4.4.0"
+Sphinx = "^4.3.2"
 sphinx-click = "^3.1.0"
 sphinx-rtd-theme = "^1.0.0"
 myst-parser = "^0.17.0"
