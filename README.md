@@ -2,8 +2,14 @@
 
 ## install
 ```bash
+# pip
 pip install git+https://github.com/eycjur/pandas3d
+
+# poetry
 poetry add git+https://github.com/eycjur/pandas3d.git#main
+
+# colab
+!pip install git+https://github.com/eycjur/pandas3d@0.1.0colab
 ```
 
 ## docs
@@ -37,3 +43,8 @@ gf
 #  [13 17 21]]
 # shape(2, 3, 3), dtype('int64')
 ```
+
+## warning
+- `gf.__values`は単にnumpy.ndarrayを保持しているだけのため、統一された型になります。
+- `gf[]`はbool値での抽出に対応していません
+- `gf.loc`は実装していません。
