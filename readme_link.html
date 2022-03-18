@@ -45,6 +45,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#install">install</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#docs">docs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#use">use</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#warning">warning</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="todolist.html">Todo lists</a></li>
@@ -78,8 +79,14 @@
 <h1>[readme]pandas3d<a class="headerlink" href="#readme-pandas3d" title="このヘッドラインへのパーマリンク"></a></h1>
 <section id="install">
 <h2>install<a class="headerlink" href="#install" title="このヘッドラインへのパーマリンク"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install git+https://github.com/eycjur/pandas3d
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># pip</span>
+pip install git+https://github.com/eycjur/pandas3d
+
+<span class="c1"># poetry</span>
 poetry add git+https://github.com/eycjur/pandas3d.git#main
+
+<span class="c1"># colab</span>
+!pip install git+https://github.com/eycjur/pandas3d@0.1.0colab
 </pre></div>
 </div>
 </section>
@@ -116,6 +123,14 @@ poetry add git+https://github.com/eycjur/pandas3d.git#main
 <span class="c1"># shape(2, 3, 3), dtype(&#39;int64&#39;)</span>
 </pre></div>
 </div>
+</section>
+<section id="warning">
+<h2>warning<a class="headerlink" href="#warning" title="このヘッドラインへのパーマリンク"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gf.__values</span></code>は単にnumpy.ndarrayを保持しているだけのため、統一された型になります。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gf[]</span></code>はbool値での抽出に対応していません</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gf.loc</span></code>は実装していません。</p></li>
+</ul>
 </section>
 </section>
 
