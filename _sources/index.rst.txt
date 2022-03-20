@@ -13,9 +13,9 @@ Welcome to pandas3d's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: OTHER UTILITIES:
+   :caption: ADVANCED:
 
-   source/modules
+   modules
    todolist
 
 
