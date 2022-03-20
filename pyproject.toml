@@ -1,5 +1,6 @@
 [tool.poetry]
 name = "pandas3d"
+version = "0.1.0"
 description = ""
 authors = ["eycjur"]
 

@@ -46,7 +46,6 @@ gf
 
 ## warning
 - `gf.__values`は単にnumpy.ndarrayを保持しているだけのため、統一された型になります。
-- `gf[]`はbool値での抽出に対応していません
 - `gf.loc`は実装していません。
 
 ## reference
