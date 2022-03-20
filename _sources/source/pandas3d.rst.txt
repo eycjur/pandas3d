@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    pandas3d.frame
+   pandas3d.util
 
 Module contents
 ---------------

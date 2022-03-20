@@ -1,0 +1,21 @@
+pandas3d.util package
+=====================
+
+Submodules
+----------
+
+pandas3d.util.logging module
+----------------------------
+
+.. automodule:: pandas3d.util.logging
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: pandas3d.util
+   :members:
+   :undoc-members:
+   :show-inheritance:
