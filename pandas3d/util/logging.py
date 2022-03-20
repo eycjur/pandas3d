@@ -12,9 +12,8 @@ def get_logger(name: str) -> logging.Logger:
         getLogger: ロガーオブジェクト
 
     Example:
-        >>> from pandas3d import util.logging
-        >>> logger = logging.get_logger(__name__)
-        >>> logger.warning("warning")
+        >>> logger = get_logger(__name__)
+        >>> logger.debug("debug")
     """
     logger = logging.getLogger(name=name)
     logger.addHandler(logging.NullHandler())
@@ -24,7 +23,12 @@ def get_logger(name: str) -> logging.Logger:
 
 
 def root_logger() -> logging.Logger:
-    """loggingに関する設定"""
+    """loggingに関する設定
+
+    Example:
+        >>> logger = root_logger()
+        >>> logger.debug("debug")
+    """
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
     logger.propagate = False

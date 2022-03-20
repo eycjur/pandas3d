@@ -614,25 +614,6 @@ requests = "*"
 test = ["codecov", "ipykernel", "pytest (>=5.3.2)", "pytest-cov", "jupyter-server", "openapi-core (>=0.14.2)", "pytest-console-scripts", "strict-rfc3339", "ruamel.yaml", "wheel", "openapi-spec-validator (<0.5)"]
 
 [[package]]
-name = "jupytext"
-version = "1.13.7"
-description = "Jupyter notebooks as Markdown documents, Julia, Python or R scripts"
-category = "dev"
-optional = false
-python-versions = "~=3.6"
-
-[package.dependencies]
-markdown-it-py = ">=1.0,<2.0"
-mdit-py-plugins = "*"
-nbformat = "*"
-pyyaml = "*"
-toml = "*"
-
-[package.extras]
-rst2md = ["sphinx-gallery (>=0.7.0,<0.8.0)"]
-toml = ["toml"]
-
-[[package]]
 name = "kiwisolver"
 version = "1.4.0"
 description = "A fast implementation of the Cassowary constraint solver"
@@ -1488,14 +1469,6 @@ python-versions = ">= 3.5"
 test = ["pytest"]
 
 [[package]]
-name = "toml"
-version = "0.10.2"
-description = "Python Library for Tom's Obvious, Minimal Language"
-category = "dev"
-optional = false
-python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
-
-[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -1614,7 +1587,7 @@ extra = []
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "25b4eacda44d193f841b85599d58415cd0abf44ecb083bb23dc43f69315c8714"
+content-hash = "dd67c7c1f9825e8152617c5340362170d807657138ce81b14b62b0042ff6a66b"
 
 [metadata.files]
 alabaster = [
@@ -1907,10 +1880,6 @@ jupyterlab-pygments = [
 jupyterlab-server = [
     {file = "jupyterlab_server-2.11.0-py3-none-any.whl", hash = "sha256:54497452a1cee6fdcc5e309c34e7bebf99f6ee495b825373ed8d4750baf90b0a"},
     {file = "jupyterlab_server-2.11.0.tar.gz", hash = "sha256:865e0b1fddefb173b1877dfe0ae115e1df94d9b4ca745d53e57f7b4e4f882396"},
-]
-jupytext = [
-    {file = "jupytext-1.13.7-py3-none-any.whl", hash = "sha256:f0cd5680804f15d07b84ba1a8ceb16a7fba8b8028fb7543f3fda198f1be706f2"},
-    {file = "jupytext-1.13.7.tar.gz", hash = "sha256:05c568627288e761f874a06875df125d6913dd45155bffa45ee113ea418515d0"},
 ]
 kiwisolver = [
     {file = "kiwisolver-1.4.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:70e7b7a4ebeddef423115ea31857732fc04e0f38dd1e6385e1af05b6164a3d0f"},
@@ -2624,10 +2593,6 @@ terminado = [
 testpath = [
     {file = "testpath-0.6.0-py3-none-any.whl", hash = "sha256:8ada9f80a2ac6fb0391aa7cdb1a7d11cfa8429f693eda83f74dde570fe6fa639"},
     {file = "testpath-0.6.0.tar.gz", hash = "sha256:2f1b97e6442c02681ebe01bd84f531028a7caea1af3825000f52345c30285e0f"},
-]
-toml = [
-    {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
-    {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
 ]
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},

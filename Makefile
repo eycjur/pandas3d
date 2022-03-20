@@ -4,7 +4,7 @@ target := .
 
 ## メタ的なコマンド
 # デフォルトコマンド(test sync_notebook lint)
-all: test sync-notebook lint
+all: test lint
 
 # ヘルプを表示
 help:
@@ -25,10 +25,6 @@ lab:
 	poetry run jupyter lab
 jupyter:
 	@make lab
-
-# notebookとpythonスクリプトを同期
-sync-notebook:
-	poetry run jupytext --sync notebook/*.ipynb
 
 # テストコードの実行
 test:

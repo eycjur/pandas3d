@@ -130,7 +130,7 @@ class GridFrame:
 
     @check_nan  # type: ignore
     def __getitem__(
-        self, index: Union[str, list, tuple]
+        self, index: Union[str, list, tuple, np.ndarray]
     ) -> Union[np.ndarray, "GridFrame"]:
         """インデクシングの処理
 
@@ -160,6 +160,23 @@ class GridFrame:
                    [16, 18, 20, 22]])
             >>> gf[["a", "b"]].shape == array.shape
             True
+
+            >>> array = np.arange(72).reshape(3, 4, 6)
+            >>> gf = GridFrame(array, ["a", "b", "c", "d", "e", "f"])
+            >>> gf[gf.values[0][0] >= 3]
+            d
+            [[ 3  9 15 21]
+             [27 33 39 45]
+             [51 57 63 69]]
+            e
+            [[ 4 10 16 22]
+             [28 34 40 46]
+             [52 58 64 70]]
+            f
+            [[ 5 11 17 23]
+             [29 35 41 47]
+             [53 59 65 71]]
+            shape(3, 4, 3), dtype('int64')
         """
         logger.debug(f"type(index): {type(index)}")
         try:
@@ -179,6 +196,19 @@ class GridFrame:
                 return GridFrame(
                     data=self.__values[:, :, index_int],  # type: ignore
                     columns=list(index),
+                )
+            elif all([type(i) == bool for i in index]):
+                return GridFrame(
+                    data=self.__values[..., index],  # type: ignore
+                    columns=[col for ind, col in zip(index, self.__columns) if ind],
+                )
+            raise ValueError(f"type unexpected{[type(i) for i in index]}")
+
+        elif type(index) == np.ndarray:
+            if type(index[0]) == np.bool_:
+                return GridFrame(
+                    data=self.__values[..., index],  # type: ignore
+                    columns=[col for ind, col in zip(index, self.__columns) if ind],
                 )
             raise ValueError(f"type unexpected{[type(i) for i in index]}")
 
