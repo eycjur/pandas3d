@@ -9,6 +9,10 @@ import pandas as pd
 import tqdm
 from matplotlib import pyplot as plt
 
+from pandas3d.util import logging
+
+logger = logging.get_logger(__name__)
+
 
 def check_nan(func: Callable) -> Callable:
     """valuesがnanの場合に例外を投げるデコレーター用の関数
@@ -157,6 +161,12 @@ class GridFrame:
             >>> gf[["a", "b"]].shape == array.shape
             True
         """
+        logger.debug(f"type(index): {type(index)}")
+        try:
+            logger.debug(f"type(index[0]): {type(index[0])}")
+        except IndexError:
+            pass
+
         if type(index) == str:
             if index in self.__columns:
                 return self.__values[:, :, self.__columns.index(index)]  # type: ignore
