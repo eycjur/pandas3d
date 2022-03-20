@@ -1587,7 +1587,7 @@ extra = []
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "dd67c7c1f9825e8152617c5340362170d807657138ce81b14b62b0042ff6a66b"
+content-hash = "fb6482c6600d3085ca572c44df56a571cfe68111d56562fd58ede2e5653776dd"
 
 [metadata.files]
 alabaster = [

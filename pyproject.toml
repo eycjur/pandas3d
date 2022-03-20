@@ -1,6 +1,5 @@
 [tool.poetry]
 name = "pandas3d"
-version = "0.1.0"
 description = ""
 authors = ["eycjur"]
 
@@ -10,6 +9,7 @@ numpy = "^1.22.2"
 pandas = "^1.4.1"
 matplotlib = "^3.5.1"
 tqdm = "^4.62.3"
+setuptools-scm = "^6.4.2"
 
 [tool.poetry.extras]
 extra = []
