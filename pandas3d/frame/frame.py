@@ -130,12 +130,12 @@ class GridFrame:
 
     @check_nan  # type: ignore
     def __getitem__(
-        self, index: Union[str, list, tuple, np.ndarray]
+        self, key: Union[str, list, tuple, np.ndarray]
     ) -> Union[np.ndarray, "GridFrame"]:
         """インデクシングの処理
 
         Args:
-            index (str): インデックス
+            key (str): インデックス
 
         Returns:
             np.ndarray: インデックスに対応する配列部を返す
@@ -178,55 +178,55 @@ class GridFrame:
              [53 59 65 71]]
             shape(3, 4, 3), dtype('int64')
         """
-        logger.debug(f"type(index): {type(index)}")
+        logger.debug(f"type(key): {type(key)}")
         try:
-            logger.debug(f"type(index[0]): {type(index[0])}")
+            logger.debug(f"type(key[0]): {type(key[0])}")
         except IndexError:
             pass
 
-        if type(index) == str:
-            if index in self.__columns:
-                return self.__values[:, :, self.__columns.index(index)]  # type: ignore
-            raise KeyError(f"{index} is not in columns")
+        if type(key) == str:
+            if key in self.__columns:
+                return self.__values[:, :, self.__columns.index(key)]  # type: ignore
+            raise KeyError(f"{key} is not in columns")
 
         # ["x", "y"]の場合は該当する配列を返す
-        elif type(index) == list:
-            if all([type(i) == str for i in index]):
-                index_int = [self.__columns.index(i) for i in index]
+        elif type(key) == list:
+            if all([type(i) == str for i in key]):
+                key_int = [self.__columns.index(i) for i in key]
                 return GridFrame(
-                    data=self.__values[:, :, index_int],  # type: ignore
-                    columns=list(index),
+                    data=self.__values[:, :, key_int],  # type: ignore
+                    columns=list(key),
                 )
-            elif all([type(i) == bool for i in index]):
+            elif all([type(i) == bool for i in key]):
                 return GridFrame(
-                    data=self.__values[..., index],  # type: ignore
-                    columns=[col for ind, col in zip(index, self.__columns) if ind],
+                    data=self.__values[..., key],  # type: ignore
+                    columns=[col for ind, col in zip(key, self.__columns) if ind],
                 )
-            raise ValueError(f"type unexpected{[type(i) for i in index]}")
+            raise ValueError(f"type unexpected{[type(i) for i in key]}")
 
-        elif type(index) == np.ndarray:
-            if type(index[0]) == np.bool_:
+        elif type(key) == np.ndarray:
+            if type(key[0]) == np.bool_:
                 return GridFrame(
-                    data=self.__values[..., index],  # type: ignore
-                    columns=[col for ind, col in zip(index, self.__columns) if ind],
+                    data=self.__values[..., key],  # type: ignore
+                    columns=[col for ind, col in zip(key, self.__columns) if ind],
                 )
-            raise ValueError(f"type unexpected{[type(i) for i in index]}")
+            raise ValueError(f"type unexpected{[type(i) for i in key]}")
 
-        elif type(index) == int or type(index) == slice:  # type: ignore
+        elif type(key) == int or type(key) == slice:  # type: ignore
             raise ValueError("ilocを利用してください")
 
-        elif type(index) == tuple:
-            if len(index) == 3:
+        elif type(key) == tuple:
+            if len(key) == 3:
                 return GridFrame(
-                    data=self.__values[index],  # type: ignore
-                    columns=self.__columns[index[-1]],
+                    data=self.__values[key],  # type: ignore
+                    columns=self.__columns[key[-1]],
                 )
             return GridFrame(
-                data=self.__values[index], columns=self.__columns  # type: ignore
+                data=self.__values[key], columns=self.__columns  # type: ignore
             )
 
         else:
-            raise ValueError(f"type unexpected{type(index)}")
+            raise ValueError(f"type unexpected{type(key)}")
 
     def __setitem__(
         self, key: Union[List[str], str], value: Union[float, np.ndarray]
@@ -369,8 +369,15 @@ class GridFrame:
         Examples:
             >>> array = np.arange(24).reshape(3, 4, 2)
             >>> gf = GridFrame(array, ["a", "b"])
-            >>> type(gf.iloc[[0], [0], 0:1])
+            >>> type(gf.iloc[:, 1:3, 0:1])
             <class 'pandas3d.frame.frame.GridFrame'>
+
+            >>> array = np.arange(24).reshape(3, 4, 2)
+            >>> gf = GridFrame(array, ["a", "b"])
+            >>> type(gf.iloc[:, 1, 0:1])
+            Traceback (most recent call last):
+            ...
+            ValueError: 3次元以上のデータが必要です
         """
         return Iloc(self)
 
@@ -672,15 +679,17 @@ class Iloc:
         if self.__gf.values is None:
             raise ValueError("データがありません")
 
-        if type(key) == tuple:
-            if len(key) == 3:
-                return GridFrame(
-                    data=self.__gf.values.__getitem__(key),
-                    columns=self.__gf.columns.__getitem__(key[-1]),
-                )
-        return GridFrame(
-            data=self.__gf.values.__getitem__(key), columns=self.__gf.columns
-        )
+        data = self.__gf.values.__getitem__(key)
+        if data.ndim < 3:
+            raise ValueError("3次元以上のデータが必要です")
+
+        if (type(key) == tuple or type(key) == list) and key.__len__() == 3:
+            return GridFrame(
+                data=data,
+                columns=self.__gf.columns.__getitem__(key[-1]),
+            )
+
+        return GridFrame(data=data, columns=self.__gf.columns)
 
     def __setitem__(
         self, key: Union[int, list, tuple, slice], value: np.ndarray
