@@ -6,11 +6,16 @@ Welcome to pandas3d's documentation!
 ===================================================
 
 .. toctree::
-   :maxdepth: 5
-   :caption: Contents:
+   :maxdepth: 1
+   :caption: BASIC:
+
+   readme_link
+
+.. toctree::
+   :maxdepth: 1
+   :caption: OTHER UTILITIES:
 
    source/modules
-   readme_link
    todolist
 
 
