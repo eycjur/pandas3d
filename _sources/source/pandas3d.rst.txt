@@ -10,6 +10,17 @@ Subpackages
    pandas3d.frame
    pandas3d.util
 
+Submodules
+----------
+
+pandas3d.version module
+-----------------------
+
+.. automodule:: pandas3d.version
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
