@@ -1,8 +1,7 @@
 """pandasのDataFrameを画像データ用に拡張したもの"""
 import copy
-from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, Iterator, List, Optional, Tuple, Union, overload
+from typing import Any, Iterator, List, Optional, Tuple, Union, overload
 
 import numpy as np
 import pandas as pd
@@ -12,28 +11,6 @@ from matplotlib import pyplot as plt
 from pandas3d.util import logging
 
 logger = logging.get_logger(__name__)
-
-
-def check_nan(func: Callable) -> Callable:
-    """valuesがnanの場合に例外を投げるデコレーター用の関数
-
-    Args:
-        func (Callable): 実行する関数
-
-    Returns:
-        Callable: 実行する関数
-
-    Raises:
-        ValueError: nanが含まれている場合
-    """
-
-    @wraps(func)
-    def _wrapper(gf: "GridFrame", *args: tuple, **kwargs: dict) -> Callable:
-        if gf.values is None:
-            raise ValueError("self.__values is None")
-        return func(gf, *args, **kwargs)
-
-    return _wrapper
 
 
 class GridFrame:
@@ -85,8 +62,8 @@ class GridFrame:
         AssertionError: カラム名はユニークである必要があります
 
         >>> GridFrame()
-        []
-        None
+        <BLANKLINE>
+        shape(0, 0, 0), dtype('float64')
     """
 
     def __init__(
@@ -94,14 +71,11 @@ class GridFrame:
         data: Optional[np.ndarray] = None,
         columns: Optional[Union[List[str], str]] = None,
     ) -> None:
+        if data is None:
+            data = np.empty((0, 0, 0))
+
         if columns is None:
             columns = []
-
-        if data is None:
-            assert len(columns) == 0, "データのサイズとカラム数が不整合です"
-            self.__values = None
-            self.__columns: list[str] = columns  # type: ignore
-            return
 
         assert data.ndim == 3 or data.ndim == 2, "データの次元は2or3である必要があります"
         if data.ndim == 2:
@@ -118,7 +92,7 @@ class GridFrame:
         assert len(set(columns)) == len(columns), "カラム名はユニークである必要があります"
 
         self.__values = data
-        self.__columns = columns  # type: ignore
+        self.__columns: list[str] = columns  # type: ignore
 
     @overload
     def __getitem__(self, index: str) -> np.ndarray:
@@ -128,7 +102,6 @@ class GridFrame:
     def __getitem__(self, index: list) -> "GridFrame":
         ...
 
-    @check_nan  # type: ignore
     def __getitem__(
         self, key: Union[str, list, tuple, np.ndarray]
     ) -> Union[np.ndarray, "GridFrame"]:
@@ -186,7 +159,7 @@ class GridFrame:
 
         if type(key) == str:
             if key in self.__columns:
-                return self.__values[:, :, self.__columns.index(key)]  # type: ignore
+                return self.__values[:, :, self.__columns.index(key)]
             raise KeyError(f"{key} is not in columns")
 
         # ["x", "y"]の場合は該当する配列を返す
@@ -194,12 +167,12 @@ class GridFrame:
             if all([type(i) == str for i in key]):
                 key_int = [self.__columns.index(i) for i in key]
                 return GridFrame(
-                    data=self.__values[:, :, key_int],  # type: ignore
+                    data=self.__values[:, :, key_int],
                     columns=list(key),
                 )
             elif all([type(i) == bool for i in key]):
                 return GridFrame(
-                    data=self.__values[..., key],  # type: ignore
+                    data=self.__values[..., key],
                     columns=[col for ind, col in zip(key, self.__columns) if ind],
                 )
             raise ValueError(f"type unexpected{[type(i) for i in key]}")
@@ -207,7 +180,7 @@ class GridFrame:
         elif type(key) == np.ndarray:
             if type(key[0]) == np.bool_:
                 return GridFrame(
-                    data=self.__values[..., key],  # type: ignore
+                    data=self.__values[..., key],
                     columns=[col for ind, col in zip(key, self.__columns) if ind],
                 )
             raise ValueError(f"type unexpected{[type(i) for i in key]}")
@@ -218,12 +191,10 @@ class GridFrame:
         elif type(key) == tuple:
             if len(key) == 3:
                 return GridFrame(
-                    data=self.__values[key],  # type: ignore
+                    data=self.__values[key],
                     columns=self.__columns[key[-1]],
                 )
-            return GridFrame(
-                data=self.__values[key], columns=self.__columns  # type: ignore
-            )
+            return GridFrame(data=self.__values[key], columns=self.__columns)
 
         else:
             raise ValueError(f"type unexpected{type(key)}")
@@ -245,16 +216,19 @@ class GridFrame:
             ['a', 'b', 'c']
             >>> gf.shape
             (3, 4, 3)
+
+            >>> gf = GridFrame()
+            >>> gf["a"] = np.arange(12).reshape(3, 4)
+            >>> gf
+            a
+            [[ 0  1  2  3]
+             [ 4  5  6  7]
+             [ 8  9 10 11]]
+            shape(3, 4, 1), dtype('int64')
         """
         # 返り値ではなく内部の値を変更するようにする
         # initとは別にバリデーションを行うのはよくないので、仮でappendしてそれに内部を書き換える
-        if self.__values is None:
-            if type(value) == int or type(value) == float:
-                raise ValueError("value is not np.ndarray")
-            gf_ = GridFrame(data=value, columns=key)  # type: ignore
-
-        elif type(key) == str and key in self.__columns:
-            print("__setitem__: 値を上書きします")
+        if type(key) == str and key in self.__columns:
             gf_ = self
             self.__values[..., self.__columns.index(key)] = value
 
@@ -342,7 +316,6 @@ class GridFrame:
             return False
         return self.__columns == other.columns and (self.__values == other.values).all()
 
-    @check_nan
     def __getattr__(self, name: str) -> Any:
         """既定以外の属性アクセス
 
@@ -390,8 +363,6 @@ class GridFrame:
         Returns:
             str: 文字列表現
         """
-        if self.__values is None:
-            return f"{self.__columns}\n{self.__values}"
         str_ = "\n".join(
             [f"{col}\n{self.__values[..., i]}" for i, col in enumerate(self.__columns)]
         )
@@ -428,7 +399,7 @@ class GridFrame:
             ...
             AssertionError: キーが重複しています
         """
-        if self.__values is None:
+        if self.__values.shape == (0, 0, 0):
             return gf
 
         assert self.shape[:2] == gf.shape[:2], "サイズが違います"
@@ -437,7 +408,7 @@ class GridFrame:
         assert len(col_append) == len(set(col_append)), "キーが重複しています"
 
         return GridFrame(
-            data=np.concatenate((self.__values, gf.__values), axis=-1),  # type: ignore
+            data=np.concatenate((self.__values, gf.__values), axis=-1),
             columns=col_append,
         )
 
@@ -456,7 +427,7 @@ class GridFrame:
             >>> type(gf.values)
             <class 'numpy.ndarray'>
         """
-        return self.__values  # type: ignore
+        return self.__values
 
     @property
     def columns(self) -> List[str]:
@@ -475,8 +446,7 @@ class GridFrame:
         """
         return self.__columns
 
-    @property  # type: ignore
-    @check_nan
+    @property
     def shape(self) -> Tuple[int, ...]:
         """shapeを返す
 
@@ -489,7 +459,7 @@ class GridFrame:
             >>> gf.shape
             (3, 4, 2)
         """
-        return self.__values.shape  # type: ignore
+        return self.__values.shape
 
     def append(self, gf: "GridFrame") -> "GridFrame":
         """追加する
@@ -502,7 +472,6 @@ class GridFrame:
         """
         return self.__add__(gf)
 
-    @check_nan
     def copy(self) -> "GridFrame":
         """コピーする
 
@@ -593,7 +562,6 @@ class GridFrame:
         """
         return self[[col for col in self.__columns if col.endswith(txt)]]
 
-    @check_nan
     def to_pandas(self) -> pd.DataFrame:
         """pandasのDataFrameに変換する
 
@@ -614,11 +582,10 @@ class GridFrame:
             ['a', 'b']
         """
         return pd.DataFrame(
-            data=self.__values.reshape(-1, self.shape[-1]),  # type: ignore
+            data=self.__values.reshape(-1, self.shape[-1]),
             columns=self.__columns,
         )
 
-    @check_nan
     def check_isfinite(self) -> None:
         """nan, inf, -infが含まれている場合に例外を投げる
 
@@ -628,10 +595,9 @@ class GridFrame:
             ...
             ValueError: nanやinfが含まれています
         """
-        if (~np.isfinite(self.__values)).sum() != 0:  # type: ignore
+        if (~np.isfinite(self.__values)).sum() != 0:
             raise ValueError("nanやinfが含まれています")
 
-    @check_nan
     def draw_distribution(
         self, save_dir: Path, is_axis: bool = True, extension: str = "png"
     ) -> None:
