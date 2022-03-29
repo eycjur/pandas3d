@@ -52,6 +52,8 @@ sphinx:
 sphinx-reflesh:
 	rm -rf docs/_build/* docs/source/*.rst
 	@make --no-print-directory sphinx
+open:
+	open -a "Google Chrome" docs/_build/index.html
 
 # プロファイリング
 profile:
