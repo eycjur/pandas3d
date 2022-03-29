@@ -24,7 +24,7 @@ poetry add git+https://github.com/eycjur/pandas3d.git#main
 
 Install on colab:
 ```bash
-!pip install git+https://github.com/eycjur/pandas3d@0.1.0colab
+!pip install git+https://github.com/eycjur/pandas3d@1.0.0colab
 ```
 
 # Quick Start
